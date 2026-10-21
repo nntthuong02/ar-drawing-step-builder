@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AR Drawing Step Builder</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">AR DRAWING STUDIO</p>
+      <h1>Tách line-art thành các bước vẽ</h1>
+      <p class="subtitle">Một canvas duy nhất · các step luôn khớp tuyệt đối · xuất SVG, JSON và PNG</p>
+    </div>
+    <button id="loadSample" class="button secondary">Mở ảnh mẫu</button>
+  </header>
+
+  <main class="workspace">
+    <aside class="panel controls">
+      <section>
+        <h2>1. Nguồn ảnh</h2>
+        <label class="upload" for="fileInput">
+          <span>Chọn PNG/JPG line-art</span>
+          <small>Nền trắng hoặc trong suốt</small>
+        </label>
+        <input id="fileInput" type="file" accept="image/png,image/jpeg,image/webp" hidden />
+        <div id="imageInfo" class="info">Chưa tải ảnh</div>
+      </section>
+
+      <section>
+        <h2>2. Làm sạch nét</h2>
+        <label class="field">
+          <span>Ngưỡng nét đen <output id="thresholdValue">150</output></span>
+          <input id="threshold" type="range" min="30" max="245" value="150" />
+        </label>
+        <label class="field">
+          <span>Bỏ chi tiết nhỏ hơn <output id="minSizeValue">8</output> px</span>
+          <input id="minSize" type="range" min="1" max="100" value="8" />
+        </label>
+        <button id="analyze" class="button primary" disabled>Phân tích nét</button>
+      </section>
+
+      <section>
+        <h2>3. Chia bước</h2>
+        <label class="field">
+          <span>Số bước <output id="stepCountValue">8</output></span>
+          <input id="stepCount" type="range" min="2" max="16" value="8" />
+        </label>
+        <button id="autoSplit" class="button secondary" disabled>Tự chia tăng dần độ khó</button>
+        <p class="hint">Step đầu ít nét nhất, các step sau thêm dần chi tiết. Càng nhiều step thì bước đầu càng đơn giản.</p>
+      </section>
+
+      <section>
+        <h2>4. Xuất file</h2>
+        <div id="saveSupport" class="save-support">Đang kiểm tra khả năng chọn vị trí lưu…</div>
+        <div class="button-grid">
+          <button id="exportSvg" class="button secondary" disabled>Master SVG</button>
+          <button id="exportJson" class="button secondary" disabled>Steps JSON</button>
+          <button id="exportStepSvg" class="button secondary" disabled>SVG step hiện tại</button>
+          <button id="exportAllSvg" class="button secondary" disabled>Tất cả SVG step</button>
+          <button id="exportPng" class="button secondary" disabled>PNG hiện tại</button>
+          <button id="exportAll" class="button secondary" disabled>Tất cả PNG</button>
+        </div>
+      </section>
+    </aside>
+
+    <section class="stage-panel">
+      <div class="stage-toolbar">
+        <div class="mode-switch" role="group" aria-label="Chế độ xem">
+          <button class="mode active" data-mode="cumulative">Tích lũy</button>
+          <button class="mode" data-mode="current">Riêng step</button>
+          <button class="mode" data-mode="components">Các vùng nét</button>
+        </div>
+        <div class="legend">
+          <span><i class="dot previous"></i> bước trước</span>
+          <span><i class="dot active-dot"></i> bước hiện tại</span>
+        </div>
+      </div>
+
+      <div id="canvasShell" class="canvas-shell empty">
+        <canvas id="canvas" aria-label="Bản xem trước các bước vẽ"></canvas>
+        <div id="emptyState" class="empty-state">
+          <div class="empty-icon">✦</div>
+          <strong>Tải một ảnh line-art để bắt đầu</strong>
+          <span>Tool sẽ nhận diện các cụm nét và giữ nguyên chung một frame.</span>
+        </div>
+      </div>
+
+      <div class="step-editor">
+        <div class="step-heading">
+          <div>
+            <p class="eyebrow">STEP TIMELINE</p>
+            <h2 id="stepTitle">Chưa có dữ liệu</h2>
+          </div>
+          <div class="step-nav">
+            <button id="prevStep" class="icon-button" disabled aria-label="Bước trước">←</button>
+            <button id="nextStep" class="icon-button" disabled aria-label="Bước sau">→</button>
+          </div>
+        </div>
+        <div id="stepTabs" class="step-tabs"></div>
+        <div id="status" class="status">Sẵn sàng.</div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
